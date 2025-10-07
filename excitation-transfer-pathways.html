@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Excitation Transfer State Sequence Diagram</title>
+
+<!-- Load MathJax for LaTeX rendering -->
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+<style>
+  body {
+    background: #0a0a0a;
+    color: #e0e0e0;
+    font-family: "Courier New", monospace;
+    text-align: center;
+  }
+  canvas {
+    background: #0a0a0a;
+    display: block;
+    margin: 25px auto;
+    border: 1px solid #333;
+  }
+  input[type=range] {
+    width: 60%;
+    margin-top: 10px;
+  }
+  .equation {
+    width: 90%;
+    margin: 10px auto;
+    color: #eee;
+    font-size: 18px;
+  }
+</style>
+</head>
+<body>
+
+<h2>Excitation Transfer Pathways</h2>
+
+<div class="equation">
+$$
+H = 
+\frac{\hbar \omega_0}{2} \sigma_z^{(D)} + 
+\frac{\hbar \omega_0}{2} \sigma_z^{(A)} + 
+\hbar \omega_{\rm drive} a^\dagger a
++ 
+(a^\dagger + a)
+\big[
+V_D (\sigma_+^{(D)} + \sigma_-^{(D)}) +
+V_A (\sigma_+^{(A)} + \sigma_-^{(A)})
+\big]
+$$
+</div>
+
+<p>
+Adjust field quantum energy:
+ℏω<sub>drive</sub> / ℏω<sub>0</sub> = 
+<span id="ratio">0.10</span>
+</p>
+<input type="range" id="slider" min="0.05" max="1.0" step="0.01" value="0.10">
+
+<canvas id="diagram" width="750" height="500"></canvas>
+
+<script>
+const canvas = document.getElementById("diagram");
+const ctx = canvas.getContext("2d");
+const slider = document.getElementById("slider");
+const ratioDisplay = document.getElementById("ratio");
+
+// layout constants
+const centerY = canvas.height / 2;
+const xStart = 150;
+const xMid = 400;
+const xEnd = 650;
+const E0 = 100;   // approximate TLS energy
+const scale = 100; // how strongly ω_drive moves the intermediates
+
+function draw(r) {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.lineWidth = 2;
+  ctx.strokeStyle = "#fff";
+  ctx.font = "16px monospace";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+
+  // calculate vertical positions
+  const dE = scale * r;
+  const yInit = centerY;
+  const yFinal = centerY;
+  const y1 = centerY - E0 - dE; // |D*,A*,n−1⟩
+  const y2 = centerY - E0 + dE; // |D*,A*,n+1⟩
+  const y3 = centerY + E0 - dE; // |D,A,n−1⟩
+  const y4 = centerY + E0 + dE; // |D,A,n+1⟩
+
+  // draw connections (initial -> intermediates -> final)
+  const intermediates = [y1, y2, y3, y4];
+  ctx.strokeStyle = "#44f";
+  intermediates.forEach(y => {
+    ctx.beginPath();
+    ctx.moveTo(xStart, yInit);
+    ctx.lineTo(xMid, y);
+    ctx.lineTo(xEnd, yFinal);
+    ctx.stroke();
+  });
+
+  // draw states as circles
+  function state(x, y, label, color="#0ff") {
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.arc(x, y, 5, 0, 2 * Math.PI);
+    ctx.fill();
+    ctx.fillText(label, x, y - 18);
+  }
+
+  // draw states
+  state(xStart, yInit, "|D*,A,n⟩", "#0f0");
+  state(xEnd, yFinal, "|D,A*,n⟩", "#f80");
+  state(xMid, y1, "|D*,A*,n−1⟩");
+  state(xMid, y2, "|D*,A*,n+1⟩");
+  state(xMid, y3, "|D,A,n−1⟩");
+  state(xMid, y4, "|D,A,n+1⟩");
+
+  // axis and labels
+  ctx.strokeStyle = "#444";
+  ctx.beginPath();
+  ctx.moveTo(50, 50);
+  ctx.lineTo(50, 450);
+  ctx.stroke();
+  ctx.fillStyle = "#aaa";
+  ctx.fillText("Energy", 50, 30);
+}
+
+slider.oninput = () => {
+  const r = parseFloat(slider.value);
+  ratioDisplay.textContent = r.toFixed(2);
+  draw(r);
+};
+
+// initial draw
+draw(parseFloat(slider.value));
+</script>
+
+</body>
+</html>
