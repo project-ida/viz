@@ -5,5 +5,5 @@ A collection of HTML visualizations related to nucleonics
 
 Place an HTML file into the root of this repo that contains some visualization code. 
 
-Then navigate to **project-ida.github.io/viz/YOUR-NEW-FILENAME.html** to see it in action.
+Then navigate to **project-ida.github.io/viz/YOUR-NEW-FILENAME** to see it in action.
 
