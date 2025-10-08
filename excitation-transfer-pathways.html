@@ -92,10 +92,10 @@ function draw(r) {
   const dE = scale * r;
   const yInit = centerY;
   const yFinal = centerY;
-  const y1 = centerY - E0 - dE; // |D*,A*,n−1⟩
-  const y2 = centerY - E0 + dE; // |D*,A*,n+1⟩
-  const y3 = centerY + E0 - dE; // |D,A,n−1⟩
-  const y4 = centerY + E0 + dE; // |D,A,n+1⟩
+  const y1 = centerY - E0 + dE; // |D*,A*,n−1⟩
+  const y2 = centerY - E0 - dE; // |D*,A*,n+1⟩
+  const y3 = centerY + E0 + dE; // |D,A,n−1⟩
+  const y4 = centerY + E0 - dE; // |D,A,n+1⟩
 
   // draw connections (initial -> intermediates -> final)
   const intermediates = [y1, y2, y3, y4];
